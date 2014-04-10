@@ -17,6 +17,7 @@ struct Point
 	long long y;
 	long long z;
 	PIXTYPE value;
+	
 	Point(long long x,long long y,long long z,PIXTYPE value)
 	{
 		this->x=x;
@@ -62,6 +63,7 @@ public:
 	queue<Point> q;
 	Raw *skeletondata;
 	vector<Point> center;
+	int count;
 	DivideRegion(queue<Point> q,Raw *s,vector<Point> center)
 	{
 		this->q=q;
@@ -85,6 +87,7 @@ public:
 						Point pos(posx,posy,posz,0);
 						skeletondata->put(posx,posy,posz,0);
 						center.push_back(pos);
+						this->count++;
 						q.push(pos);
 					}
 
@@ -101,7 +104,7 @@ public:
 		int i,j,k;
 		Point firstseed;
 		//queue<Point> q;
-		int count=0;
+		//int count=0;
 		for ( i =0;i< skeletondata->getXsize();i++)
 		{
 			for ( j=0;j<skeletondata->getYsize();j++)
@@ -131,7 +134,7 @@ public:
 			checkadj(pos);
 			q.pop();
 		}
-		if (center.size()< count/2)
+		if (center.size()< count)
 		{
 			for ( i =0;i< skeletondata->getXsize();i++)
 			{
