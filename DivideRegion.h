@@ -562,7 +562,7 @@ public:
 					{
 						for (int n= pos.z-box ; n< pos.z+box; n++)
 						{
-							PIXTYPE val = data->get(l,m,n);
+							PIXTYPE val =data->get(l,m,n) ;
 							if (val !=0)
 							{
 								bool flag=(l-pos.x)*(pos.x-prepos.x)+(m-pos.y)*(pos.y-prepos.y)*(pos.z-prepos.z)==0;
