@@ -23,15 +23,17 @@
 #endif
 #define output "D:\\sdfdata\\" 
 //#define output "K:\\20140404\\" 
-#define input1  "L:\\sdfdata2\\edt\\20140409edt\\"	//thickness uint8	//edt		//float
-//swf 20140409 delete for float2char
-#define input2  "K:\\sdf\\volume\\clean\\clean\\ep\\20140410\\"//short
-//#define input2 "K:\\20140404\\inner\\"
-#define input3  "K:\\skeleton\\"  //skeleton uint8 //unsigned char
+//#define input1  "L:\\sdfdata2\\edt\\20140409edt\\"	//thickness uint8	//edt		//float
+////swf 20140409 delete for float2char
+//#define input2  "K:\\sdf\\volume\\clean\\clean\\ep\\20140410\\"//short
+////#define input2 "K:\\20140404\\inner\\"
+//#define input3  "K:\\skeleton\\"  //skeleton uint8 //unsigned char
 //#define input1  "F:\\data\\skeleton-edt\\"				//float
 //#define input2	"E:\\volume\\skeletono\\"		//short
 //#define input3 "F:\\data\\skeleton-s\\"   //unsigned char
-
+#define input1 "L:\\sdfdata2\\edt\\20140414edt\\"
+#define input2 "K:\\sdf\\volume\\clean\\clean\\vip20140415\\"
+#define  input3 "L:\\sdfdata2\\edt\\20140414skeleton\\"
 using namespace cimg_library;
 using namespace std;
 //////////////////////////////////////////////////////////////////////////
