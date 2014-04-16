@@ -816,8 +816,8 @@ void HUandThickness()
 		strcat(dir5,dst1);
 		strcat(dir6,dst3);
 		short*orgiondata=test.readStream(dir4,&l,&m,&n);
-		unsigned char * innerdata=new unsigned char [l*m*n];
-		test.readImage(innerdata,dir3,l*m*n);
+		PIXTYPE * innerdata=new PIXTYPE [l*m*n];
+		test.readImage2(innerdata,dir3,l*m*n);
 		unsigned char * skeletondata =new unsigned char[l*m*n];
 		test.readImage(skeletondata,dir6,l*m*n);
 		
@@ -831,12 +831,17 @@ void HUandThickness()
 			PIXTYPE a=inputo[i]=(float) orgiondata[i]+1020;	
 			max > a?max=max:max=a; 
 			min < a? min =min:min=a;
-			PIXTYPE b=skeletondataF[i]=biglittleedian(float(skeletondata[i]));
+			PIXTYPE b=skeletondataF[i]=(float(skeletondata[i]));
 			//if (PIXTYPE c=innerdataF[i]=biglittleedian((float)innerdata[i]))
 			//{
 			//	cout <<"aaa"<<endl;
 			//}
-			PIXTYPE c=innerdataF[i]=(float)innerdata[i];
+			
+			PIXTYPE c=innerdataF[i]=biglittleedian((float)innerdata[i]);
+			//if (c !=0)
+			//{
+			//	cout <<c<<endl;
+			//}
 		}
 		cout <<max<<endl;
 		cout <<min <<endl;

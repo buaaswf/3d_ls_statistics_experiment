@@ -186,7 +186,7 @@ public:
 				for (int k=0; k<colonskeleton->getZsize();k++)
 				{
 					//big --little edian
-					PIXTYPE val =biglittleedianv2(colonskeleton->get(i,j,k));
+					PIXTYPE val =(colonskeleton->get(i,j,k));
 					if (val!= 0)
 					{
 						Point point(i,j,k,255);
