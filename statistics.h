@@ -774,6 +774,7 @@ Raw* thicknessequalHU(Raw *origion,Raw *thickness)
 	}
 	return HU;
 }
+
 void HUandThickness()
 {
 	//thickness data
@@ -854,13 +855,14 @@ void HUandThickness()
 		Raw *hu=thicknessequalHU(orgion,thickness);
 		queue<Point>q;
 		vector<Point> c;
-		
 		DivideRegion *dr=new DivideRegion(q,skeleton,c);
-		//dr->putskletoninorder();
+		dr->putskletoninorders1();
+		dr->putskeletoninorders2(dr->center.front(),dr->center.back());
+		dr->wirtecenterline((int)skeleton->getXsize(),(int)skeleton->getYsize(),(int)skeleton->getZsize());
 		//dr->DivideRegionv2(skeleton,hu);
 		//dr->DivideRegionthicknessv2(skeleton,thickness);
-		dr->DivideRegionv1(skeleton,hu);
-		dr->DivideRegionthickness(skeleton,thickness);
+		//dr->DivideRegionv1(skeleton,hu);
+		//dr->DivideRegionthickness(skeleton,thickness);
 		iterFile2++;
 		iterFile3++;
 		delete thickness;

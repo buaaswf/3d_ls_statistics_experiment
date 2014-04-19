@@ -131,26 +131,27 @@ void RawImage::writeImagecolon(Raw &destImg)
 	//	else data[i]=0;
 
 	//}
-	for (int i=0;i<destImg.getZsize();i++)
-	{
-		for (int j=0;j<destImg.getYsize();j++)
-		{
-			for (int k=0;k<destImg.getXsize();k++)
-			{
-				PIXTYPE *val=&data[i*destImg.getXsize()*destImg.getYsize()+j*destImg.getXsize()+k];
-				if(k<451 &&k> 45 && j>162 &&j <391)
-				{
-					if (*val>1)
-					{
-						*val=0;
-						
-					}
-					else *val=100;
-				}
-				else *val=0;
-			}
-		}
-	}
+	//swf 10140418 delete for wirite centerline
+	//for (int i=0;i<destImg.getZsize();i++)
+	//{
+	//	for (int j=0;j<destImg.getYsize();j++)
+	//	{
+	//		for (int k=0;k<destImg.getXsize();k++)
+	//		{
+	//			PIXTYPE *val=&data[i*destImg.getXsize()*destImg.getYsize()+j*destImg.getXsize()+k];
+	//			if(k<451 &&k> 45 && j>162 &&j <391)
+	//			{
+	//				if (*val>1)
+	//				{
+	//					*val=0;
+	//					
+	//				}
+	//				else *val=100;
+	//			}
+	//			else *val=0;
+	//		}
+	//	}
+	//}
 	fwrite(data, sizeof(float), destImg.size(), p);
 	fclose(p);
 	fflush(stdout);
