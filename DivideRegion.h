@@ -373,6 +373,7 @@ public:
 			}
 		}
 		center.push_back(firstseed);
+		skeletondata->put(firstseed.x,firstseed.y,firstseed.z,0);
 		checkadj(firstseed,ff);
 		while(!q.empty())
 		{
@@ -419,7 +420,7 @@ public:
 		putskletoninorderpublic(center.front());
 		for (int i=0;i< center.size();i++)
 		{
-			skeletondata->put(center[i].x,center[i].y,center[i].z,255);
+			skeletondata->put(center[i].x,center[i].y,center[i].z,200);
 		}
 	}
 	//use cos tell which line to go
@@ -438,16 +439,21 @@ public:
 		Point ret(a.x-b.x,a.y-b.y,a.z-b.z,ff);
 		return ret;
 	}
-	Point coutadjcos(Point pos)
+	void putneighborzero()
+	{
+
+	}
+	Point* coutadjcos(Point pos,Point pre)
 	{
 		int ff=3;
-		Point pre =center.back();
+	//	Point pre =center.back();
 		Point centerdirection=makevector(pre,pos);
 		int count =0;
-		Point next;
+		Point *next=new Point();
 		int i=pos.x;
 		int j=pos.y;
 		int k= pos.z;
+		
 		vector<Point> adj;
 		double max=0;
 		for (int l=i-1 ; l <= i+1; l++)
@@ -456,20 +462,32 @@ public:
 			{
 				for (int n = k-1; n <= k+1; n++)
 				{
-					
-					if (skeletondata->get(l,m,n)==255)
+					//if (l==52&&m==358&&n==221)
+					//{
+					//	cout <<skeletondata->get(l,m,n)<<endl;
+					//}
+					//if (l==52&&m==356&&n==223)
+					//{
+					//	cout <<skeletondata->get(l,m,n)<<endl;
+					//}
+					bool f1= skeletondata->get(l,m,n)==3;
+					bool f2= !(l==pos.x&&m==pos.y&&n==pos.z);
+					if (f1 &&f2 )
 					{
-
-						Point nextadj(i,j,k,3);
+						Point nextadj(l,m,n,3);
+						skeletondata->put(l,m,n,0);
+						nextadj.x=l;
+						nextadj.y=m;
+						nextadj.z=n;
 						Point treedir=makevector(pos,nextadj);
 						double val=abs(pointcos(centerdirection,treedir));
-						if (max < val)
+						if (max <= val)
 						{
 							max = val;
-							next.x=i;
-							next.y=j;
-							next.z=k;
-							next.value=ff;
+							next->x=l;
+							next->y=m;
+							next->z=n;
+							next->value=ff;
 							
 						}
 						
@@ -483,7 +501,7 @@ public:
 	vector<Point> coutadj(int i,int j,int k)
 	{
 		int count =0;
-		int ff = 0;
+		int ff = 3;
 		vector<Point> adj;
 		for (int l=i-1 ; l <= i+1; l++)
 		{
@@ -492,11 +510,11 @@ public:
 				for (int n = k-1; n <= k+1; n++)
 				{
 					
-					if (skeletondata->get(l,m,n)!=0)
+					if (skeletondata->get(l,m,n)==200)
 					{
 						count++;
 						Point point(l,m,n,skeletondata->get(l,m,n));
-						skeletondata->put(i,j,k,ff);
+						skeletondata->put(l,m,n,ff);
 						adj.push_back(point);
 					}
 				}
@@ -514,11 +532,35 @@ public:
 			vector<Point>  adj=coutadj(pos.x,pos.y,pos.z);
 			for (int i = 0; i < adj.size() && count <= threshold; i++)
 			{
-				countall(adj[i],count+=adj.size());
+				countall(adj[i],count+=1);
 			}
 			flag =false;
 		}
 		return count;
+	}
+	// look up which point adj is white without change flag just record
+	vector<Point> justcountadj(int i,int j,int k)
+	{
+		int count =0;
+		vector<Point> adj;
+		
+		for (int l=i-1 ; l <= i+1; l++)
+		{
+			for (int m = j-1; m <= j+1; m++)
+			{
+				for (int n = k-1; n <= k+1; n++)
+				{
+
+					if (skeletondata->get(l,m,n)!=0)
+					{
+						count++;
+						Point point(l,m,n,skeletondata->get(l,m,n));
+						adj.push_back(point);
+					}
+				}
+			}
+		}
+		return adj;
 	}
 	//void putskeletoninorders2(Point start,Point end);
 	void putskeletoninorders2(Point start ,Point end)
@@ -541,22 +583,28 @@ public:
 		
 
 					
-					adj= coutadj(pos.x,pos.y,pos.z);
-					if ((adj.size())>=2)
+					adj= justcountadj(pos.x,pos.y,pos.z);
+					if ((adj.size())>=3)
 					{
 						Point maxpoint;
 						int max=0;
 						for (int ll=0;  ll< adj.size(); ++ll)
 						{
-							pos =adj[ll];
-							
-							int count=0;
-							int allregion=countall(pos,count);
-							if (allregion > max)
+							if (adj[ll].x==pos.x&&adj[ll].y==pos.y&&adj[ll].z!=pos.z)
 							{
-								max =allregion;
-								maxpoint=pos;
-								pos=maxpoint;
+
+							}
+							else
+							{
+									pos =adj[ll];
+									int count=0;
+									int allregion=countall(pos,count);
+									if (allregion > max)
+									{
+										max =allregion;
+										maxpoint=pos;
+										pos=maxpoint;
+									}
 							}
 						}
 						center.push_back(pos);
@@ -567,7 +615,7 @@ public:
 						}
 						
 					}
-					else if(adj.size()==1) 
+					else if(adj.size()==2) 
 					{
 						pos=adj[0];
 						center.push_back(pos);
@@ -594,32 +642,93 @@ public:
 	//void putskeletoninorders2(Point start,Point end);
 	void putskeletoninorders3(Point start ,Point end)
 	{
-		center.clear();
+		vector<Point> newcenter;
 		vector<Point> adj;
 		bool flag =true;
 		Point pos=start;
 		while (flag)
 		{
-			vector<Point> val=coutadj(pos.x,pos.y,pos.z);
+			if (newcenter.size()==358)
+			{
+				cout <<"10"<<endl;
+			}
+			vector<Point> val=coutadj(pos.x,pos.y,pos.z);//flag==2;
 			if (val.size()==1)
 			{
-				center.push_back(val.back());
-				if (center.back().x == end.x && center.back().y==end.y&& center.back().z==end.z)
+				newcenter.push_back(val.back());
+				skeletondata->put(val.back().x,val.back().y,val.back().z,0);
+				if (newcenter.back().x == end.x && newcenter.back().y==end.y&& newcenter.back().z==end.z)
 				{
 					flag=false;
 					break;
 				}
+				pos=val.back();
 			}
-			else pos=coutadjcos(pos);
-			if (center.back().x == end.x && center.back().y==end.y&& center.back().z==end.z)
+			else if(val.size()!=0)
+				{
+					if (pos.x==start.x&&pos.y==start.y&&pos.z==start.z)
+					{
+						//newcenter.push_back(pos);
+						//pos=center[2];
+						//newcenter.push_back(pos);
+						//skeletondata->put(center[1].x,center[1].y,center[1].z,0);
+						//skeletondata->put(pos.x,pos.y,pos.z,0);
+						int size=val.size();
+						newcenter.push_back(pos);
+						pos=*(coutadjcos(pos,center[size]));
+					}
+					else 
+					{
+						int size=newcenter.size();
+						if (pos.x==newcenter.back().x&&pos.y==newcenter.back().y&&pos.z==newcenter.back().z)
+						{
+							pos=*(coutadjcos(pos,newcenter[size-4]));//change 2 to 4
+						}
+						else 
+						{
+							newcenter.push_back(pos);
+							if (newcenter.size()>10)
+							{
+								pos=*(coutadjcos(pos,newcenter[size-6]));
+							}
+							else pos=*(coutadjcos(pos,newcenter[size-1]));
+
+						}
+						
+						if (newcenter.back().x == end.x && newcenter.back().y==end.y&& newcenter.back().z==end.z)
+						{
+							flag=false;
+							break;
+						}
+					}
+					
+			}
+			// no points neighbour
+			else 
 			{
-				flag=false;
-				break;
+				// point is enough
+				if (newcenter.size()> center.size()*5/6 )
+				{
+					flag = false;
+				}
+				else 
+				{
+					for (int i=0;i<center.size();i++)
+					{
+						if (center[i].x==pos.x&&center[i].y==pos.y&&center[i].z==pos.z)
+						{
+							pos=center[i+1];
+							newcenter.push_back(pos);
+							skeletondata->put(pos.x,pos.y,pos.z,0);
+							break;
+						}
+					}
+				}
 			}
-			center.push_back(pos);
-		
 
 		}
+		center.clear();
+		center=newcenter;
 	}
 	//compute the HU statistics
 	void DivideRegionv1(Raw *colonskeleton,Raw *data)

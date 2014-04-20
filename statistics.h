@@ -857,7 +857,7 @@ void HUandThickness()
 		vector<Point> c;
 		DivideRegion *dr=new DivideRegion(q,skeleton,c);
 		dr->putskletoninorders1();
-		dr->putskeletoninorders2(dr->center.front(),dr->center.back());
+		dr->putskeletoninorders3(dr->center.front(),dr->center.back());
 		dr->wirtecenterline((int)skeleton->getXsize(),(int)skeleton->getYsize(),(int)skeleton->getZsize());
 		//dr->DivideRegionv2(skeleton,hu);
 		//dr->DivideRegionthicknessv2(skeleton,thickness);
