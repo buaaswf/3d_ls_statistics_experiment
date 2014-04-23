@@ -157,6 +157,30 @@ public:
 		}
 
 	}
+	void markneighbor(Point p)
+	{
+		int i=p.x,j=p.y,k=p.z;
+			int ff=200;
+		for (int l=i-1 ; l <= i+1; l++)
+		{
+			for (int m = j-1; m <= j+1; m++)
+			{
+				for (int n = k-1; n <= k+1; n++)
+				{
+
+					if (skeletondata->get(l,m,n)==3)
+					{
+						//ssscount++;
+						//Point point(l,m,n,skeletondata->get(l,m,n));
+						skeletondata->put(l,m,n,ff);
+					
+					}
+				}
+			}
+		}
+
+	}
+
 	//void checkadjminusone(Point firstseed,int ff)
 	//{
 	//	
@@ -475,7 +499,7 @@ public:
 					if (f1 &&f2 )
 					{
 						Point nextadj(l,m,n,3);
-						skeletondata->put(l,m,n,0);
+						skeletondata->put(l,m,n,1);//cos
 						nextadj.x=l;
 						nextadj.y=m;
 						nextadj.z=n;
@@ -666,6 +690,7 @@ public:
 			}
 			else if(val.size()!=0)
 				{
+					
 					if (pos.x==start.x&&pos.y==start.y&&pos.z==start.z)
 					{
 						//newcenter.push_back(pos);
@@ -723,6 +748,148 @@ public:
 							break;
 						}
 					}
+				}
+			}
+
+		}
+		center.clear();
+		center=newcenter;
+	}
+	void putskeletoninorders3s2(Point start ,Point end)
+	{
+		vector<Point> newcenter;
+		vector<Point> adj;
+		bool flag =true;
+		Point pos=start;
+		vector <Point> nodeseperateflag;
+		Point nodechoosed;
+		while (flag)
+		{
+			if (newcenter.size()==358)
+			{
+				cout <<"10"<<endl;
+			}
+			vector<Point> val=coutadj(pos.x,pos.y,pos.z);//flag==2;
+			if (val.size()==1)
+			{
+				newcenter.push_back(val.back());
+				skeletondata->put(val.back().x,val.back().y,val.back().z,0);
+				if (newcenter.back().x == end.x && newcenter.back().y==end.y&& newcenter.back().z==end.z)
+				{
+					flag=false;
+					break;
+				}
+				pos=val.back();
+			}
+			else if(val.size()!=0)
+			{
+				
+				nodeseperateflag=val;
+				if (pos.x==start.x&&pos.y==start.y&&pos.z==start.z)
+				{
+					//newcenter.push_back(pos);
+					//pos=center[2];
+					//newcenter.push_back(pos);
+					//skeletondata->put(center[1].x,center[1].y,center[1].z,0);
+					//skeletondata->put(pos.x,pos.y,pos.z,0);
+					int size=val.size();
+					newcenter.push_back(pos);
+					pos=*(coutadjcos(pos,center[size]));
+				}
+				else 
+				{
+					int size=newcenter.size();
+					if (pos.x==newcenter.back().x&&pos.y==newcenter.back().y&&pos.z==newcenter.back().z)
+					{
+						if (size>5)
+						{
+							pos=*(coutadjcos(pos,newcenter[size-4]));//change 2 to 4
+						} 
+						else
+						{
+							pos=*(coutadjcos(pos,newcenter[size-2]));//change 2 to 4
+						}
+						
+					}
+					else 
+					{
+						newcenter.push_back(pos);
+						if (newcenter.size()>10)
+						{
+							pos=*(coutadjcos(pos,newcenter[size-6]));
+						}
+						else pos=*(coutadjcos(pos,newcenter[size-1]));
+
+					}
+
+					if (newcenter.back().x == end.x && newcenter.back().y==end.y&& newcenter.back().z==end.z)
+					{
+						flag=false;
+						break;
+					}
+				}
+
+				nodechoosed=pos;
+			}
+			// no points neighbour
+			else 
+			{
+				// point is enough
+				if (newcenter.size()> center.size()*5/6 )
+				{
+					flag = false;
+				}
+				else 
+				{
+					bool flag=true;
+					for (int i=0;i<nodeseperateflag.size();i++)
+					{
+						
+						if (!(nodeseperateflag[i].x==nodechoosed.x&&nodeseperateflag[i].y==nodechoosed.y&&nodeseperateflag[i].z==nodechoosed.z))
+						{
+							//the error tree come out from center
+							for ( int i=newcenter.size()-1; i>0 && flag; i--)
+							{
+								flag=skeletondata->get(newcenter[i].x,newcenter[i].y,newcenter[i].z)==0;
+								
+								skeletondata->put(newcenter[i].x,newcenter[i].y,newcenter[i].z,200);
+								
+								if (newcenter[i].x=nodechoosed.x&&newcenter[i].y==nodechoosed.y&&newcenter[i].z==nodechoosed.z)
+								{
+									//newcenter.pop_back();
+									//skeletondata->put(newcenter[i].x,newcenter[i].y,newcenter[i].z,255);
+
+									newcenter.pop_back();
+									break;
+								}
+								else
+									newcenter.pop_back();
+							}
+							if (!flag)//
+							{
+								pos = nodeseperateflag[i];
+								newcenter.push_back(pos);
+								nodechoosed=pos;
+								markneighbor(pos);
+								skeletondata->put(pos.x,pos.y,pos.z,0);
+								break;
+
+							}
+							else 
+							{
+								for (int i=0;i<center.size();i++)
+								{
+									if (center[i].x==pos.x&&center[i].y==pos.y&&center[i].z==pos.z)
+									{
+										pos=center[i+1];
+										newcenter.push_back(pos);
+										skeletondata->put(pos.x,pos.y,pos.z,0);
+										break;
+									}
+								}
+							}
+						}//if
+					}//for
 				}
 			}
 
